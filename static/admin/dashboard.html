@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISMA MASTER | Command Center</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/admin/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</head>
+<body class="dashboard-body">
+    <!-- PANEL DE NAVEGACIÓN TÁCTICA -->
+    <aside class="side-panel">
+        <div class="side-header">
+            <span class="logo-text">🛡️ SISMA HUB</span>
+        </div>
+        
+        <nav class="side-nav">
+            <a href="#stats" class="active"><i class="fas fa-microchip"></i> Telemetría IA</a>
+            <a href="#fleet"><i class="fas fa-network-wired"></i> Gestión de Flota</a>
+            <a href="#personal"><i class="fas fa-users-gear"></i> Personal Táctico</a>
+            <a href="#vault"><i class="fas fa-vault"></i> Bóveda Táctica</a>
+            <a href="#config"><i class="fas fa-gears"></i> Configuración</a>
+            <a href="#logs"><i class="fas fa-terminal"></i> Registro Táctico</a>
+            <a href="/" class="logout-link"><i class="fas fa-power-off"></i> Finalizar Sesión</a>
+        </nav>
+
+        <div class="user-profile-card" style="margin-top: auto; padding: 20px; background: rgba(0,209,255,0.05); border-radius: 16px; border: 1px solid rgba(0,209,255,0.1);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: var(--primary-cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold;">SS</div>
+                <div>
+                    <div style="font-size: 0.9rem; font-weight: 700;">S. Salazar</div>
+                    <div style="font-size: 0.7rem; color: var(--primary-cyan); letter-spacing: 1px;">SUPERADMIN</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ÁREA DE OPERACIONES -->
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="status-indicator">
+                <span class="pulse-dot"></span>
+                ESTADO DEL NÚCLEO: <span style="color: var(--matrix-green);">OPERATIVO</span> | LATENCIA: 12ms
+            </div>
+            <div class="system-time" id="digitalClock" style="font-family: 'Fira Code'; font-size: 0.8rem; color: #94A3B8;">
+                00:00:00 UTC
+            </div>
+        </header>
+
+        <div class="viewport-container" id="appViewport">
+            
+            <!-- MÓDULO: TELEMETRÍA IA -->
+            <section id="stats" class="dashboard-section" style="display: block;">
+                <h2 class="section-heading"><i class="fas fa-brain" style="color: var(--primary-cyan);"></i> Telemetría de Entrenamiento YOLOv10</h2>
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <label>Época Actual</label>
+                        <div id="current_epoch" class="stat-value">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <label>mAP50 (Fuerza)</label>
+                        <div id="current_map" class="stat-value">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <label>Recall (Sensibilidad)</label>
+                        <div id="current_recall" class="stat-value">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <label>Iteraciones Totales</label>
+                        <div id="raw_effort" class="stat-value">--</div>
+                    </div>
+                </div>
+                
+                <div class="glass-container">
+                    <canvas id="trainingChart" style="max-height: 400px;"></canvas>
+                </div>
+            </section>
+
+            <!-- MÓDULO: GESTIÓN DE FLOTA -->
+            <section id="fleet" class="dashboard-section">
+                <h2 class="section-heading"><i class="fas fa-shield-halved" style="color: var(--primary-cyan);"></i> Autorización de Despliegue (HWID)</h2>
+                <div class="glass-container">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>HWID / CÓDIGO</th>
+                                    <th>OPERADOR / HOST</th>
+                                    <th>SISTEMA</th>
+                                    <th>ESTADO</th>
+                                    <th>LICENCIA</th>
+                                    <th>COMANDO</th>
+                                </tr>
+                            </thead>
+                            <tbody id="licenseTableBody">
+                                <!-- Data por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MÓDULO: PERSONAL TÁCTICO -->
+            <section id="personal" class="dashboard-section">
+                <h2 class="section-heading"><i class="fas fa-users-line" style="color: var(--primary-cyan);"></i> Reclutamiento y Control de Operadores</h2>
+                <div style="display: grid; grid-template-columns: 350px 1fr; gap: 30px;">
+                    <div class="glass-container">
+                        <h3 style="font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 20px;">Alta de Nuevo Operador</h3>
+                        <form action="/api/admin/operators/add" method="post" class="modular-form">
+                            <div class="input-group">
+                                <label>Usuario Operativo</label>
+                                <input type="text" name="username" required class="input-tech" placeholder="e.g. op.gonzalez">
+                            </div>
+                            <div class="input-group">
+                                <label>Contraseña de Acceso</label>
+                                <input type="password" name="password" required class="input-tech" placeholder="••••••••">
+                            </div>
+                            <div class="input-group">
+                                <label>Nombre Completo</label>
+                                <input type="text" name="full_name" required class="input-tech" placeholder="Juan Gonzalez">
+                            </div>
+                            <div class="input-group">
+                                <label>Días de Autorización Inicial</label>
+                                <select name="days" class="input-tech">
+                                    <option value="30">30 Días (Estándar)</option>
+                                    <option value="90">90 Días (Trimestral)</option>
+                                    <option value="365">1 Año (Anual)</option>
+                                    <option value="9999">Ilimitado</option>
+                                </select>
+                            </div>
+                            <p style="font-size: 0.7rem; color: #94A3B8; margin-bottom: 15px; line-height: 1.4;">
+                                <i class="fas fa-magic"></i> El HWID se vinculará **automáticamente** cuando el operador inicie sesión por primera vez.
+                            </p>
+                            <button type="submit" class="btn-action" style="width: 100%;">ALISTAR OPERADOR</button>
+                        </form>
+                    </div>
+                    
+                    <div class="glass-container">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>OPERADOR</th>
+                                        <th>USUARIO</th>
+                                        <th>HWID VINCULADO</th>
+                                        <th>CADUCIDAD</th>
+                                        <th>COMANDO</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="operatorTableBody">
+                                    <!-- Data por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MÓDULO: BÓVEDA TÁCTICA -->
+            <section id="vault" class="dashboard-section">
+                <h2 class="section-heading"><i class="fas fa-key" style="color: var(--primary-cyan);"></i> Bóveda Táctica (Firmas IA)</h2>
+                <div style="display: grid; grid-template-columns: 350px 1fr; gap: 30px;">
+                    <div class="glass-container">
+                        <h3 style="font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 20px;">Subir Actualización (Aval)</h3>
+                        <form action="/api/admin/vault/add" method="post" enctype="multipart/form-data" class="modular-form">
+                            <div class="input-group">
+                                <label>Etiqueta de Versión</label>
+                                <input type="text" name="version" required class="input-tech" placeholder="e.g. v4.2.0">
+                            </div>
+                            <div class="input-group">
+                                <label>Archivo Binario (.pt, .exe, .zip)</label>
+                                <input type="file" name="file" required class="input-tech" style="padding: 10px;">
+                            </div>
+                            <p style="font-size: 0.7rem; color: #94A3B8; margin-top: 10px; line-height: 1.4;">
+                                <i class="fas fa-microchip"></i> El sistema generará la **Firma Digital (SHA-256)** automáticamente al procesar el archivo.
+                            </p>
+                            <button type="submit" class="btn-action" style="width: 100%; margin-top: 15px;">PUBLICAR ACTUALIZACIÓN</button>
+                        </form>
+                    </div>
+                    
+                    <div class="glass-container">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>VERSIÓN</th>
+                                        <th>ARCHIVO</th>
+                                        <th>ESTADO</th>
+                                        <th>FECHA REGISTRO</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vaultTableBody">
+                                    <!-- Data por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MÓDULO: REGISTRO TÁCTICO -->
+            <section id="logs" class="dashboard-section">
+                <h2 class="section-heading"><i class="fas fa-rectangle-list" style="color: var(--primary-cyan);"></i> Eventos de Seguridad</h2>
+                <div class="terminal-view" id="logTerminal">
+                    <!-- Logs con autoscroll -->
+                </div>
+            </section>
+
+            <!-- MÓDULO: CONFIGURACIÓN CENTRAL -->
+            <section id="config" class="dashboard-section">
+                <h2 class="section-heading"><i class="fas fa-tower-broadcast" style="color: var(--primary-cyan);"></i> Enlace de Sincronización Global</h2>
+                <div class="glass-container" style="max-width: 800px;">
+                    <h3 style="font-family: 'Orbitron'; font-size: 1.1rem; margin-bottom: 20px;">Webhook de Sincronización Táctica</h3>
+                    <p style="color: #94A3B8; margin-bottom: 25px; line-height: 1.6;">
+                        Utiliza esta URL en la configuración de la **App de Tierra (Ground Station)** para habilitar el flujo de datos bidireccional, 
+                        sincronización de licencias, bitácoras de vuelo y actualizaciones de la Bóveda Táctica.
+                    </p>
+                    
+                    <div class="input-group" style="background: rgba(15, 23, 42, 0.5); padding: 20px; border-radius: 12px; border: 1px dashed var(--primary-cyan);">
+                        <label style="color: var(--primary-cyan); font-weight: bold; margin-bottom: 10px; display: block;">WEBHOOK MASTER URL</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="webhookUrlInput" readonly class="input-tech" style="flex: 1; font-family: 'Fira Code'; font-size: 0.9rem; color: var(--matrix-green);" value="Cargando enlace...">
+                            <button onclick="copyWebhook()" class="btn-action" style="white-space: nowrap;"><i class="fas fa-copy"></i> COPIAR ENLACE</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="padding: 15px; background: rgba(0,209,255,0.05); border-radius: 8px;">
+                            <div style="font-size: 0.7rem; color: #94A3B8;">IDENTIFICADOR DEL HUB</div>
+                            <div id="hubIdConfig" style="font-family: 'Orbitron'; font-size: 1rem;">--</div>
+                        </div>
+                        <div style="padding: 15px; background: rgba(0,209,255,0.05); border-radius: 8px;">
+                            <div style="font-size: 0.7rem; color: #94A3B8;">ESTADO DE ENLACE</div>
+                            <div id="hubStatusConfig" style="font-family: 'Orbitron'; font-size: 1rem; color: var(--matrix-green);">--</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="/static/admin/dashboard_logic.js"></script>
+</body>
+</html>

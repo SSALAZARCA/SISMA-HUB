@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: sisma_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-sisma_admin}
+      POSTGRES_PASSWORD: ${DB_PASS:-Ssc841209*}
+      POSTGRES_DB: ${DB_NAME:-sismadhub}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sisma_net
+
+  app:
+    build: .
+    container_name: sisma_app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER:-sisma_admin}:${DB_PASS:-Ssc841209*}@db:5432/${DB_NAME:-sismadhub}
+      - SECRET_KEY_HMAC=SISMA_ULTRA_SECRET_KEY_2026
+      - HUB_PUBLIC_URL=${HUB_PUBLIC_URL:-http://localhost:10000}
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./data:/app/data
+      - ./static:/app/static
+    networks:
+      - sisma_net
+
+volumes:
+  postgres_data:
+
+networks:
+  sisma_net:
+    driver: bridge

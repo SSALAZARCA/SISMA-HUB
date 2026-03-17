@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISMA | Panel de Operador</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/admin/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-body">
+    <div class="side-panel">
+        <div class="side-header">
+            <span class="logo-text">🛡️ SISMA OPS</span>
+        </div>
+        <nav class="side-nav">
+            <a href="#flight" class="active"><i class="fas fa-plane"></i> Bitácora de Vuelo</a>
+            <a href="#downloads"><i class="fas fa-download"></i> Centro de Descargas</a>
+            <a href="#feedback"><i class="fas fa-comment-dots"></i> Sugerencias / Errores</a>
+            <a href="/" class="logout-link"><i class="fas fa-sign-out-alt"></i> Salir</a>
+        </nav>
+    </div>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="status-indicator">
+                <span class="pulse-dot"></span>
+                ESTACIÓN OPERATIVA | LISTO
+            </div>
+            <div class="user-info">
+                <span class="operator-tag" id="op_name">OP: Cargando...</span>
+            </div>
+        </header>
+
+        <!-- SECCIÓN BITÁCORA -->
+        <section id="flight" class="dashboard-section">
+            <h2 class="section-heading">📝 Bitácora de Vuelo y Éxito</h2>
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <label>Vuelos Totales</label>
+                    <div id="total_flights" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <label>Eficacia Global</label>
+                    <div id="avg_success" class="stat-value">0%</div>
+                </div>
+            </div>
+            
+            <div class="card-grid">
+                <div class="feature-card" style="text-align: left; padding: 25px;">
+                    <h3>Registrar Nuevo Vuelo</h3>
+                    <form id="flightForm">
+                        <div class="input-group">
+                            <label>Detecciones Totales</label>
+                            <input type="number" id="detections" required placeholder="0">
+                        </div>
+                        <div class="input-group">
+                            <label>% de Precisión (Estimado)</label>
+                            <input type="number" step="0.1" id="precision" required placeholder="0.0">
+                        </div>
+                        <div class="input-group">
+                            <label>Comentarios de Operación</label>
+                            <textarea id="comments" style="width:100%; height:80px; background:#161b22; border:1px solid #30363d; color:white; padding:10px; border-radius:4px;"></textarea>
+                        </div>
+                        <button type="submit" class="btn-login" style="margin-top:10px;">CERRAR BITÁCORA</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DESCARGAS -->
+        <section id="downloads" class="dashboard-section" style="display:none;">
+            <h2 class="section-heading">💾 Centro de Descargas Oficinas</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>RECURSO</th>
+                            <th>VERSIÓN</th>
+                            <th>FECHA</th>
+                            <th>ESTADO</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="downloadTable">
+                        <!-- Modelos y Actualizaciones -->
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top:20px; font-size:0.8rem; color:var(--text-soft);">
+                ⚠️ <strong>FILTRO DE INTEGRIDAD:</strong> Solo los modelos descargados de esta sección serán validados por la App.
+            </p>
+        </section>
+
+        <!-- SECCIÓN FEEDBACK -->
+        <section id="feedback" class="dashboard-section" style="display:none;">
+            <h2 class="section-heading">💬 Sugerencias / Errores</h2>
+            <div class="card-grid">
+                <div class="feature-card" style="text-align: left; padding: 25px;">
+                    <h3>Reportar Incidencia o Mejora</h3>
+                    <form id="feedbackForm">
+                        <div class="input-group">
+                            <label>Categoría</label>
+                            <select id="fb_type" style="width:100%; background:#161b22; border:1px solid #30363d; color:white; padding:10px; border-radius:4px;">
+                                <option value="Sugerencia">Sugerencia de Mejora</option>
+                                <option value="Error">Reportar Falla (Bug)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Mensaje para el Dueño</label>
+                            <textarea id="fb_content" style="width:100%; height:120px; background:#161b22; border:1px solid #30363d; color:white; padding:10px; border-radius:4px;" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-login" style="margin-top:10px;">ENVIAR A SUPERVISIÓN</button>
+                    </form>
+                    <p id="fb_status" style="margin-top:10px; font-size:0.8rem;"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/operator/op_logic.js"></script>
+</body>
+</html>
