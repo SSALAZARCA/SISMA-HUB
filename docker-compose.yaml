@@ -36,7 +36,8 @@ services:
       - "10000:10000"
     volumes:
       - ./data:/app/data
-      - ./static:/app/static
+      # NO MONTAR STATIC EN PRODUCCIÓN: LOS ARCHIVOS YA ESTÁN EN LA IMAGEN
+      # MONTARLO SOBREESCRIBE LOS ARCHIVOS CON CARPETAS VACÍAS
     networks:
       - sisma_net
 

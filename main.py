@@ -378,23 +378,35 @@ async def register_feedback(request: Request, db: Session = Depends(get_db)):
 # --- RUTAS WEB ---
 @app.get("/", response_class=HTMLResponse)
 async def landing():
-    with open(os.path.join(STATIC_DIR, "index.html"), "r", encoding="utf-8") as f:
-        return f.read()
+    try:
+        with open(os.path.join(STATIC_DIR, "index.html"), "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return f"<h1>Error 404</h1><p>Archivo base no encontrado en {STATIC_DIR}</p>"
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_login():
-    with open(os.path.join(STATIC_DIR, "admin", "index.html"), "r", encoding="utf-8") as f:
-        return f.read()
+    try:
+        with open(os.path.join(STATIC_DIR, "admin", "index.html"), "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>Error 404</h1><p>Login de administracion no disponible.</p>"
 
 @app.get("/admin/dashboard", response_class=HTMLResponse)
 async def dashboard_view():
-    with open(os.path.join(STATIC_DIR, "admin", "dashboard.html"), "r", encoding="utf-8") as f:
-        return f.read()
+    try:
+        with open(os.path.join(STATIC_DIR, "admin", "dashboard.html"), "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>Error 404</h1><p>Dashboard de administracion no disponible.</p>"
 
 @app.get("/operator/dashboard", response_class=HTMLResponse)
 async def op_dashboard_view():
-    with open(os.path.join(STATIC_DIR, "operator", "dashboard.html"), "r", encoding="utf-8") as f:
-        return f.read()
+    try:
+        with open(os.path.join(STATIC_DIR, "operator", "dashboard.html"), "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>Error 404</h1><p>Dashboard de operador no disponible.</p>"
 
 @app.post("/admin/action")
 async def action(id: int = Form(...), act: str = Form(...), days: int = Form(30), db: Session = Depends(get_db)):
