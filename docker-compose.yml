@@ -6,11 +6,11 @@ services:
     container_name: sisma_db
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER:-sisma_admin}
-      POSTGRES_PASSWORD: ${DB_PASS:-Ssc841209*}
-      POSTGRES_DB: ${DB_NAME:-sismadhub}
+      POSTGRES_USER: sisma_admin
+      POSTGRES_PASSWORD: Ssc841209*
+      POSTGRES_DB: sismadhub
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U sisma_admin -d sismadhub"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,9 +27,11 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://${DB_USER:-sisma_admin}:${DB_PASS:-Ssc841209*}@db:5432/${DB_NAME:-sismadhub}
+      - DATABASE_URL=postgresql://sisma_admin:Ssc841209*@db:5432/sismadhub
       - SECRET_KEY_HMAC=SISMA_ULTRA_SECRET_KEY_2026
-      - HUB_PUBLIC_URL=${HUB_PUBLIC_URL:-http://localhost:10000}
+      - ADMIN_USER=santiago.salazar
+      - ADMIN_PASS=Ssc841209*
+      - HUB_PUBLIC_URL=http://localhost:10000
     ports:
       - "10000:10000"
     volumes:

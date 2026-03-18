@@ -19,10 +19,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{os.path.join(BASE_DIR, 'data', 'licenses.db')}")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 SECRET_KEY_HMAC = os.getenv("SECRET_KEY_HMAC", "SISMA_ULTRA_SECRET_KEY_2026").encode()
-ADMIN_USER = "santiago.salazar"
-ADMIN_PASS = "Ssc841209*"
+ADMIN_USER = os.getenv("ADMIN_USER", "santiago.salazar")
+ADMIN_PASS = os.getenv("ADMIN_PASS", "Ssc841209*")
 # URL Pública del HUB (para Coolify/Producción)
-HUB_PUBLIC_URL = os.getenv("HUB_PUBLIC_URL", "http://localhost:8088")
+HUB_PUBLIC_URL = os.getenv("HUB_PUBLIC_URL", "http://localhost:10000")
 
 # --- ENDPOINT DE CONFIGURACIÓN ---
 @app.get("/api/admin/config/webhook")
