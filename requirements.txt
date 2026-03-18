@@ -1,9 +1,8 @@
-fastapi==0.104.1
-uvicorn==0.24.0
-sqlalchemy==2.0.23
+fastapi==0.110.0
+uvicorn==0.29.0
+sqlalchemy==2.0.28
 psycopg2-binary==2.9.9
-python-multipart==0.0.6
+python-multipart==0.0.9
 requests==2.31.0
-jinja2==3.1.2
-hashlib
-hmac
+jinja2==3.1.3
+# hashlib and hmac are part of Python standard library, removed from here
