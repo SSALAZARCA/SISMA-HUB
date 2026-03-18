@@ -98,6 +98,15 @@ class TrainingStat(Base):
     loss = Column(Float)
     timestamp = Column(String)
     status = Column(String)
+
+class TacticalModel(Base):
+    __tablename__ = "tactical_models"
+    id = Column(Integer, primary_key=True, index=True)
+    project = Column(String, index=True)
+    filename = Column(String)
+    version = Column(String)
+    file_hash = Column(String)
+    timestamp = Column(String)
     raw_effort = Column(Integer)
 
 class Operator(Base):
@@ -432,6 +441,49 @@ async def action(id: int = Form(...), act: str = Form(...), days: int = Form(30)
     
     db.commit()
     return RedirectResponse(url="/admin/dashboard", status_code=303)
+
+# --- GESTIÓN DE MODELOS TÁCTICOS ---
+@app.post("/api/ops/models/upload")
+async def upload_tactical_model(
+    file: UploadFile = File(...),
+    project: str = Form("SISMA_GEN"),
+    hash: str = Form(""),
+    db: Session = Depends(get_db)
+):
+    """Recibe modelos desde el SISMA-TRAINER."""
+    models_dir = os.path.join(STATIC_DIR, "models")
+    if not os.path.exists(models_dir):
+        os.makedirs(models_dir)
+    
+    file_path = os.path.join(models_dir, file.filename)
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+    
+    # Registrar en DB
+    new_model = TacticalModel(
+        project=project,
+        filename=file.filename,
+        version=datetime.now().strftime("%Y%m%d.%H%M"),
+        file_hash=hash,
+        timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+    db.add(new_model)
+    db.commit()
+    return {"status": "Uploaded", "version": new_model.version}
+
+@app.get("/api/ops/models/latest/{project}")
+async def get_latest_model(project: str, db: Session = Depends(get_db)):
+    """Informa a la App de Tierra sobre el último modelo disponible."""
+    model = db.query(TacticalModel).filter(TacticalModel.project == project).order_by(TacticalModel.id.desc()).first()
+    if not model:
+        raise HTTPException(status_code=404, detail="No models found")
+    
+    return {
+        "version": model.version,
+        "filename": model.filename,
+        "hash": model.file_hash,
+        "url": f"/static/models/{model.filename}"
+    }
 
 if __name__ == "__main__":
     import uvicorn
