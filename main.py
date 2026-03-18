@@ -26,10 +26,18 @@ HUB_PUBLIC_URL = os.getenv("HUB_PUBLIC_URL", "http://localhost:10000")
 
 # --- ENDPOINT DE CONFIGURACIÓN ---
 @app.get("/api/admin/config/webhook")
-async def get_webhook_config():
+async def get_webhook_config(request: Request):
     """Retorna la URL del Webhook para la sincronización con la App de Tierra."""
+    # Detección dinámica: Si es localhost (default), usar el dominio desde el que se accede
+    host = HUB_PUBLIC_URL
+    if "localhost" in host:
+        # Extraer el esquema (http/https) y el dominio del request actual
+        scheme = request.url.scheme
+        netloc = request.url.netloc
+        host = f"{scheme}://{netloc}"
+    
     return {
-        "webhook_url": f"{HUB_PUBLIC_URL}/api/ops/sync",
+        "webhook_url": f"{host}/api/ops/sync",
         "hub_id": "SISMA-HUB-MASTER-01",
         "status": "Ready"
     }
